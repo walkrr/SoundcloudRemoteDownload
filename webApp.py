@@ -1,7 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template
 from lyricShit import *
 import json
-import pyexpect
 import youtube_dl
 app = Flask(__name__)
 app._static_folder = ''
@@ -12,7 +11,7 @@ def index():
 
 
 
-@app.route("/downloaded", methods = ['POST'])
+@app.route("/downloaded")
 def download():
     url = 'https://soundcloud.com/not_ac/biscotti-in-the-air-juice-1?utm_source=clipboard'
     ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
@@ -27,7 +26,7 @@ def download():
     title = result['title']
     art = result['thumbnail']
     # TODO finish download template html and link it here
-    return False
+    return render_template('downloadTemplate.html', art = art, artist = artist, title = title, path = outFile)
 
 
 
