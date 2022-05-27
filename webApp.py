@@ -1,7 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from lyricShit import *
 import json
 import youtube_dl
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3, APIC
+import mutagen
+import os
+import shutil
 app = Flask(__name__)
 app._static_folder = ''
 
@@ -11,73 +16,59 @@ def index():
 
 
 
-@app.route("/downloaded")
+@app.route("/download", methods = ['POST'])
 def download():
-    url = 'https://soundcloud.com/not_ac/biscotti-in-the-air-juice-1?utm_source=clipboard'
+    url = request.form.get("URL")
     ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
 
-    with ydl:
-        result = ydl.extract_info(
-            url,
-            download=True
-        )
-    outFile = result['id'] + result['ext']
+    try:
+        with ydl:
+            result = ydl.extract_info(
+                url,
+                download=True
+            )
+    except:
+        return("An error was encountered when downloading the requested file")
+    outFile = result['id'] + "." + result['ext']
     artist = result['uploader']
     title = result['title']
     art = result['thumbnail']
-    # TODO finish download template html and link it here
     return render_template('downloadTemplate.html', art = art, artist = artist, title = title, path = outFile)
 
 
 
 @app.route("/update", methods =['POST'])
-def update():
-    # TODO updates specified metadata fields for a given path
-    return False
-
-
-
-@app.route("/import", methods =['POST'])
-def beet():
-    path = None
-    try: 
-        runner = pyexpect.spawn("beet import "+path)
-        runner.expect("files")
-        runner.sendline("y")
+def setdData():
+    path = request.form.get("path")
+    try:
+        meta = mutagen.File(path, easy=True)
+        meta.add_tags()
+        meta.save(path, v1=2)
     except:
-        return False
-    # do i need to kill the runner? do it if so
-    return True
+        pass
+    response = requests.get(request.form.get('art'), stream=True)
+    with open('img.jpg', 'wb') as out_file:
+        shutil.copyfileobj(response.raw, out_file)
+    del response
 
+    audio = EasyID3(path)
+    audio['artist'] = request.form.get('artist')
+    audio['title'] = request.form.get('title')
+    audio['album'] = request.form.get('title')
+    audio.save()
 
-
-@app.route("/embedArt", methods =['POST'])
-def art():
-    # TODO embeds art to a given url
-    return False
-
-
-
-@app.route("/fetchGenuis", methods = ['POST'])
-def genuis():
-    # TODO fetch genuis lyrics for setting up metadata sync
-    return False
-
-
-
-@app.route("/path", methods = ["POST"])
-def path():
-    # TODO return relative path for use with lrc data generator
-    return False
-
-
-
-@app.route("/getData", methods = ["POST"])
-def data(file):
-    # TODO get metadata for specified file
-    return False
-
-
+    audio = ID3(path)
+    with open('img.jpg', 'rb') as albumart:
+        audio['APIC'] = APIC(
+                          encoding=3,
+                          mime='image/jpeg',
+                          type=3, desc=u'Cover',
+                          data=albumart.read()
+                        )            
+    os.remove('img.jpg')
+    audio.save()
+    os.popen("beet import -A " + path)
+    return("added")
 
 if __name__ == "__main__":
     app.run()

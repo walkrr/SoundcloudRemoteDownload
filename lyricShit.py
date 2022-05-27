@@ -24,39 +24,6 @@ def cleanGenuis(lyrics):
     # Skip first line, genius has it as the title
     return olyrics[1:]
 
-# Function to clean RC lyrics
-def cleanRC(lrc):
-    # TODO implement
-    return False
-
-# function to compare downloaded LRC against genius lyrics to ensure lrc is for correct song and formatted correctly
-def validateLyrics(genius, lrc):
-    # TODO implement
-    return False
-
-
-# function to combine a timestamp array with lyrics from genius and return lrc
-def mergeTimestamps(genius, timestamps):
-    # TODO implement
-    return False
-
-
-# function to seperate timestamps from lyrics in a given lrc file
-def extractTimestamps(lrc):
-    # TODO implement
-    return False
-
-
-# function to get lyrics from genius, code taken from beets lyric plugin
-def getGenius(url):
-    # TODO implement
-    return False
-
-# function to search genius for a specified song and artist, then retrun a url to the specified song
-def genuisSearch(song,artist):
-    # TODO implement
-    return False
-
 # Function to try to retrive LRC file from site given song and artist
 def retrieveLrc(song,artist):
     # Generate url for request

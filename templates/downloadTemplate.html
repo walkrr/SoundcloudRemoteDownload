@@ -6,7 +6,7 @@
     </head>
     <body>
         <p>Set the Metadata for the New Song</p>
-        <form action="/downloaded" method="POST">
+        <form action="/update" method="POST">
             <input type="text" name="artist" id="artist" value={{ artist }}><br>
             <caption for="artist">Artist</caption><br>
             <input type="text" name="title" id="title" value={{ title }}><br>
@@ -15,6 +15,7 @@
             <img src={{ art }} alt=""><br>
             <p>This is the cover art that will be set, a different one can be specified below</p><br>
             <input type="text" name="art" id="art" value ={{ art }}><br>
+            <input type="submit" name="" id="">
         </form>
     </body>
 </html>
