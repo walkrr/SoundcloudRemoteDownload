@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request
-from lyricShit import *
-import json
 import youtube_dl
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
