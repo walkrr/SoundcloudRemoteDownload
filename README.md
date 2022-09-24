@@ -13,5 +13,3 @@ I personally listen to a lot of songs that aren't published on regular streaming
 - Setup an REST api
 - Include more config options
 - Add docker container
-#### Possible?
-- See if there is a way to easily sync with spotify local files(not sure how feasible this is)
